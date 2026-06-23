@@ -1,0 +1,43 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: linux-x64
+            lib: libdoltlite.so
+          - os: macos-latest
+            target: osx-arm64
+            lib: libdoltlite.dylib
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: "3.2"
+        bundler-cache: true
+
+    - name: Stage libdoltlite from the latest doltlite release
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        mkdir -p vendor/libdoltlite work
+        version="$(gh release view --repo dolthub/doltlite --json tagName --jq '.tagName' | sed 's/^v//')"
+        gh release download "v${version}" --repo dolthub/doltlite \
+          --pattern "doltlite-lib-${{ matrix.target }}-${version}.zip" --dir work
+        unzip -qo "work/doltlite-lib-${{ matrix.target }}-${version}.zip" -d work
+        found="$(find work -name '${{ matrix.lib }}' | head -1)"
+        test -n "$found"
+        cp "$found" "vendor/libdoltlite/${{ matrix.lib }}"
+
+    - name: Test
+      run: bundle exec rake test

@@ -1,0 +1,7 @@
+/pkg/
+/tmp/
+*.gem
+vendor/libdoltlite/*.so
+vendor/libdoltlite/*.dylib
+vendor/libdoltlite/*.dll
+.bundle/
