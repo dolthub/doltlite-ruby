@@ -42,12 +42,13 @@ for entry in "${MAPPINGS[@]}"; do
   tmp="$(mktemp -d)"
   unzip -qo "$zip" -d "$tmp"
   found="$(find "$tmp" -name "$libfile" | head -1)"
-  rm -rf -- "$tmp"
   if [ -z "$found" ]; then
     echo "ERROR: ${libfile} not found in ${zip}" >&2
+    rm -rf -- "$tmp"
     exit 1
   fi
   cp "$found" "vendor/libdoltlite/${libfile}"
+  rm -rf -- "$tmp"
 
   GEM_PLATFORM="$platform" gem build doltlite.gemspec -o "pkg/doltlite-${VERSION}-${platform}.gem"
   built=$((built + 1))
