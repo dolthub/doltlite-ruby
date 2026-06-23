@@ -51,8 +51,9 @@ module Doltlite
       rows.dig(0, 0)
     end
 
-    def version
-      C.sqlite3_libversion
+    # The doltlite version string (SELECT dolt_version()).
+    def dolt_version
+      execute("SELECT dolt_version()").dig(0, 0)
     end
 
     def close
