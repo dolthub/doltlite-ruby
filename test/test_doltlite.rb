@@ -10,7 +10,7 @@ class DoltliteTest < Minitest::Test
     db.execute("CREATE TABLE t(id INTEGER PRIMARY KEY, v TEXT)")
     db.execute("INSERT INTO t(id, v) VALUES (?, ?)", 1, "a")
 
-    hash = db.commit(message: "c1")
+    hash = db.dolt_commit(message: "c1")
     refute_nil hash
 
     # Initial commit plus c1 => 2 rows in dolt_log.

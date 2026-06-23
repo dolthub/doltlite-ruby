@@ -25,7 +25,9 @@ db = Doltlite.open("app.db")   # or ":memory:"
 db.execute("CREATE TABLE notes(id INTEGER PRIMARY KEY, body TEXT)")
 db.execute("INSERT INTO notes(body) VALUES (?)", "first note")
 
-hash = db.commit(message: "add first note")
+# A Dolt version-control commit (a new entry in dolt_log) — not a SQL
+# transaction COMMIT. Equivalent to db.execute("SELECT dolt_commit('-A','-m',...)").
+hash = db.dolt_commit(message: "add first note")
 puts "committed #{hash}"
 
 db.query("SELECT commit_hash, message FROM dolt_log").each do |commit_hash, message|
@@ -38,6 +40,8 @@ db.close
 `execute`/`query` take positional bind values (`?`) and return rows as arrays of
 column values. The `dolt_*` functions and virtual tables (`dolt_log`,
 `dolt_status`, `dolt_diff`, `dolt_branches`, ...) are invoked through SQL.
+`dolt_commit` is the version-control commit that adds to `dolt_log` — distinct
+from a SQL transaction commit.
 
 ## License
 

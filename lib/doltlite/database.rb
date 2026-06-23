@@ -40,9 +40,11 @@ module Doltlite
     end
     alias query execute
 
-    # Convenience for SELECT dolt_commit(...). Stages everything when all is
-    # true. Returns the new commit hash.
-    def commit(message:, all: true)
+    # Make a Dolt version-control commit: SELECT dolt_commit(...). This is the
+    # version-control operation (a new entry in dolt_log), NOT a SQL
+    # transaction COMMIT. Stages everything when all is true. Returns the new
+    # commit hash.
+    def dolt_commit(message:, all: true)
       args = all ? ["-A", "-m", message] : ["-m", message]
       placeholders = (["?"] * args.length).join(", ")
       rows = execute("SELECT dolt_commit(#{placeholders})", *args)
