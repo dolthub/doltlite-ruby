@@ -1,4 +1,4 @@
 module Doltlite
   # Updated per release by the dolthub/doltlite release workflow.
-  VERSION = "0.51.4"
+  VERSION = "0.51.5"
 end
